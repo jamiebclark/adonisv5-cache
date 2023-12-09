@@ -1,6 +1,6 @@
 {
   "name": "adonisv5-cache",
-  "version": "0.3.4",
+  "version": "0.1.0",
   "description": "Cache provider for AdonisJs framework",
   "scripts": {
     "test": "node node_modules/.bin/mocha",
