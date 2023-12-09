@@ -1,33 +1,36 @@
 {
-  "name": "adonis-cache",
+  "name": "adonisv5-cache",
   "version": "0.3.4",
   "description": "Cache provider for AdonisJs framework",
   "scripts": {
     "test": "node node_modules/.bin/mocha",
-    "lint": "standard src/**/*.js test/*.js providers/*.js"
+    "lint": "standard src/**/*.js test/*.js providers/*.js",
+    "compile": "tsc && npm run copy:files",
+    "copy:files": "copyfiles \"templates/**/*.txt\" build && npm run copy:instructions_md",
+    "copy:instructions_md": "copyfiles \"instructions.md\" build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/helnokaly/adonis-cache.git"
+    "url": "git+https://github.com/jamiebclark/adonisv5-cache.git"
   },
-  "keywords": [
-    "adonisjs",
-    "adonis",
-    "cache",
-    "caching"
-  ],
-  "author": "Hany El Nokaly",
+  "author": "Jamie Clark",
   "license": "MIT",
-  "homepage": "https://github.com/helnokaly/adonis-cache",
+  "homepage": "https://github.com/jamiebclark/adonisv5-cache",
   "devDependencies": {
-    "@adonisjs/ace": "^4.0.5",
-    "@adonisjs/fold": "^4.0.2",
+    "@adonisjs/application": "^5.3.0",
+    "@adonisjs/core": "^5.9.0",
+    "@adonisjs/events": "^7.2.1",
+    "@adonisjs/lucid": "^18.4.2",
+    "@adonisjs/mrm-preset": "^5.0.3",
+    "@adonisjs/redis": "^7.3.4",
     "chai": "^4.1.2",
+    "copyfiles": "^2.4.1",
     "ioredis": "^3.2.2",
     "knex": "^0.16.3",
     "mocha": "^4.0.1",
     "sqlite3": "^4.0.6",
-    "standard": "^10.0.3"
+    "standard": "^10.0.3",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "lodash": "^4.17.11"
@@ -37,5 +40,18 @@
       "describe",
       "it"
     ]
+  },
+  "types": "./build/adonis-typings/index.d.ts",
+  "adonisjs": {
+    "instructionsMd": "./build/instructions.md",
+    "types": "adonisv5-cache",
+    "providers": [
+      "adonisv5-cache"
+    ],
+    "templates": {
+      "config": [
+        "cache.txt"
+      ]
+    }
   }
 }
