@@ -35,7 +35,7 @@ export default class RedisTaggedCache extends TaggedCache {
     /**
      * Store a reference to the cache key against the reference key.
      */
-    pushKeys(namespace: string, key: CacheKey, reference: string): Promise<void>;
+    pushKeys(namespace: string, key: CacheKey, reference: string): Promise<number[]>;
     /**
      * Delete all of the items that were stored forever.
      */

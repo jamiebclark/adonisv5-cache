@@ -56,9 +56,7 @@ class RedisTaggedCache extends TaggedCache_1.default {
      */
     async pushKeys(namespace, key, reference) {
         const fullKey = this.store.getPrefix() + crypto_1.default.createHash('sha1').update(namespace).digest('hex') + ':' + key;
-        for (let segment of namespace.split('|')) {
-            await this.store.connection().sadd(this.referenceKey(segment, reference), fullKey);
-        }
+        return Promise.all(namespace.split('|').map((segment) => this.store.connection().sadd(this.referenceKey(segment, reference), fullKey)));
     }
     /**
      * Delete all of the items that were stored forever.
@@ -86,15 +84,13 @@ class RedisTaggedCache extends TaggedCache_1.default {
      */
     async deleteValues(referenceKey) {
         const values = lodash_1.default.uniq(await this.store.connection().smembers(referenceKey));
-        for (let i = 0; i < values.length; i++) {
-            await this.store.connection().del(values[i]);
-        }
+        return Promise.all(values.map((value) => this.store.connection().del(value)));
     }
     /**
      * Get the reference key for the segment.
      */
     referenceKey(segment, suffix) {
-        return this.store.getPrefix() + segment + ':' + suffix;
+        return `${this.store.getPrefix()}${segment}:${suffix}`;
     }
 }
 exports.default = RedisTaggedCache;

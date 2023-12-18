@@ -31,11 +31,10 @@ class RedisStore extends TaggableStore_1.default {
      */
     async many(keys) {
         let values = await Promise.all(keys.map(key => this.get(key)));
-        let mappedValues = {};
-        for (let i = 0; i < keys.length; i++) {
-            mappedValues[keys[i]] = values[i];
-        }
-        return mappedValues;
+        return keys.reduce((acc, key, i) => ({
+            ...acc,
+            [key]: values[i]
+        }), {});
     }
     /**
      * Store an item in the cache for a given number of minutes.

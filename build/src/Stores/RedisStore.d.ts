@@ -18,7 +18,7 @@ export default class RedisStore extends TaggableStore {
      *
      * Items not found in the cache will have a null value.
      */
-    many(keys: CacheKey[]): Promise<{}>;
+    many(keys: CacheKey[]): Promise<Record<string, any>>;
     /**
      * Store an item in the cache for a given number of minutes.
      */
