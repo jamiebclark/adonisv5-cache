@@ -1,7 +1,7 @@
 /// <reference path="../../adonis-typings/cache.d.ts" />
-import { CacheKey, CacheManyValues, CacheNullableValue, CacheNumericValue, CacheStoreContract, CacheValue, MinutesInput, RepositoryContract } from '@ioc:AdonisV5Cache';
+import { CacheKey, CacheManyValues, CacheNullableValue, CacheNumericValue, CacheStoreContract, CacheValue, MinutesInput, RepositoryContract, TagsInput } from '@ioc:AdonisV5Cache';
 export default abstract class BaseStore implements CacheStoreContract {
-    tags(_names: string[]): RepositoryContract;
+    tags(..._names: TagsInput[]): RepositoryContract;
     get(_key: CacheKey): Promise<CacheNullableValue>;
     many(_kes: CacheKey[]): Promise<CacheManyValues>;
     put(_key: CacheKey, _value: CacheValue, _minutes: MinutesInput): Promise<void>;

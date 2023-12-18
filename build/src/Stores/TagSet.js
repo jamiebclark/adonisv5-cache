@@ -7,7 +7,6 @@ const crypto_1 = __importDefault(require("crypto"));
 class TagSet {
     /**
      * Create a new TagSet instance.
-     *
      */
     constructor(store, names = []) {
         this.names = [];
@@ -16,14 +15,12 @@ class TagSet {
     }
     /**
      * Reset all tags in the set.
-     *
      */
     reset() {
         return Promise.all(this.names.map((name) => this.resetTag(name)));
     }
     /**
      * Get the unique tag identifier for a given tag.
-     *
      */
     async tagId(name) {
         const id = await this.store.get(this.tagKey(name));
@@ -31,21 +28,18 @@ class TagSet {
     }
     /**
      * Get an array of tag identifiers for all of the tags in the set.
-     *
      */
     tagIds() {
         return Promise.all(this.names.map(name => this.tagId(name)));
     }
     /**
      * Get a unique namespace that changes when any of the tags are flushed.
-     *
      */
     async getNamespace() {
         return (await this.tagIds()).join('|');
     }
     /**
      * Reset the tag and return the new tag identifier.
-     *
      */
     async resetTag(name) {
         const id = crypto_1.default.randomBytes(8).toString('hex');
@@ -54,14 +48,12 @@ class TagSet {
     }
     /**
      * Get the tag identifier key for a given tag.
-     *
      */
     tagKey(name) {
         return `tag:${name}:key`;
     }
     /**
      * Get all of the tag names in the set.
-     *
      */
     getNames() {
         return this.names;

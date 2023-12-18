@@ -51,7 +51,7 @@ export default class RedisTaggedCache extends TaggedCache {
     /**
      * Delete item keys that have been stored against a reference.
      */
-    private _deleteValues;
+    private deleteValues;
     /**
      * Get the reference key for the segment.
      */

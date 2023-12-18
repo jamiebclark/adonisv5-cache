@@ -1,4 +1,4 @@
-import { MinutesInput } from "@ioc:AdonisV5Cache"
+import { MinutesInput, TagsInput } from "@ioc:AdonisV5Cache"
 
 export function serialize(data: object) {
   return JSON.stringify(data)
@@ -35,4 +35,12 @@ export function getMinutes(duration: MinutesInput): number | null {
 
 export function getMinutesOrZero(duration: MinutesInput): number {
   return getMinutes(duration) ?? 0
+}
+
+export function getTags(tagsInputs: TagsInput | TagsInput[]): string[] {
+  if (typeof tagsInputs === 'string') {
+    return [tagsInputs]
+  }
+  const inputs = tagsInputs as string[];
+  return inputs.reduce((acc, tagInput) => acc.concat(getTags(tagInput)), [] as string[])
 }

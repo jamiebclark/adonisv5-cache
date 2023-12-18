@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Repository_1 = __importDefault(require("./Repository"));
 class BaseStore {
-    tags(_names) {
+    tags(..._names) {
         console.warn('Tags are being ignored');
         return new Repository_1.default(this);
     }

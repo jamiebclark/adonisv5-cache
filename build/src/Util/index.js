@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMinutesOrZero = exports.getMinutes = exports.randomIntBetween = exports.valueOf = exports.deserialize = exports.serialize = void 0;
+exports.getTags = exports.getMinutesOrZero = exports.getMinutes = exports.randomIntBetween = exports.valueOf = exports.deserialize = exports.serialize = void 0;
 function serialize(data) {
     return JSON.stringify(data);
 }
@@ -38,3 +38,11 @@ function getMinutesOrZero(duration) {
     return getMinutes(duration) ?? 0;
 }
 exports.getMinutesOrZero = getMinutesOrZero;
+function getTags(tagsInputs) {
+    if (typeof tagsInputs === 'string') {
+        return [tagsInputs];
+    }
+    const inputs = tagsInputs;
+    return inputs.reduce((acc, tagInput) => acc.concat(getTags(tagInput)), []);
+}
+exports.getTags = getTags;

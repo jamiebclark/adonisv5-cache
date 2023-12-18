@@ -1,9 +1,9 @@
-import { CacheKey, CacheManyValues, CacheNullableValue, CacheNumericValue, CacheStoreContract, CacheValue, MinutesInput, RepositoryContract } from '@ioc:AdonisV5Cache'
+import { CacheKey, CacheManyValues, CacheNullableValue, CacheNumericValue, CacheStoreContract, CacheValue, MinutesInput, RepositoryContract, TagsInput } from '@ioc:AdonisV5Cache'
 import Repository from './Repository'
 
 export default abstract class BaseStore implements CacheStoreContract {
 
-  public tags(_names: string[]): RepositoryContract {
+  public tags(..._names: TagsInput[]): RepositoryContract {
     console.warn('Tags are being ignored')
     return new Repository(this)
   }

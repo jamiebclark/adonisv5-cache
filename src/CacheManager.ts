@@ -1,7 +1,7 @@
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { EmitterContract } from '@ioc:Adonis/Core/Event'
 import { QueryClientContract } from '@ioc:Adonis/Lucid/Database'
-import { BaseCacheConfig, CacheConfig, CacheDriver, CacheStoreContract, DatabaseCacheConfig, RedisCacheConfig } from '@ioc:AdonisV5Cache'
+import { BaseCacheConfig, CacheConfig, CacheDriver, CacheStoreContract, DatabaseCacheConfig, RedisCacheConfig, RepositoryContract } from '@ioc:AdonisV5Cache'
 import DatabaseStore from './Stores/DatabaseStore'
 import NullStore from './Stores/NullStore'
 import ObjectStore from './Stores/ObjectStore'
@@ -17,7 +17,7 @@ export default class CacheManager {
   /**
    * The array of resolve cache stores
    */
-  private stores: CacheStoreContract[] = []
+  private stores: Partial<Record<CacheDriver, RepositoryContract>> = {}
 
   /**
    * The registered custom driver creators
@@ -68,10 +68,11 @@ export default class CacheManager {
   public store(customName?: CacheDriver) {
     const name = customName || this.getDefaultDriver()
     this.stores[name] = this.get(name)
-    if (!this.stores[name]) {
+    const store = this.stores[name]
+    if (typeof store === 'undefined') {
       throw new Error(`Store not found: ${name}`)
     }
-    return this.stores[name]
+    return store
   }
 
   /**

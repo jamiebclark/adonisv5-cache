@@ -13,7 +13,7 @@ class CacheManager {
         /**
          * The array of resolve cache stores
          */
-        this.stores = [];
+        this.stores = {};
         /**
          * The registered custom driver creators
          */
@@ -58,10 +58,11 @@ class CacheManager {
     store(customName) {
         const name = customName || this.getDefaultDriver();
         this.stores[name] = this.get(name);
-        if (!this.stores[name]) {
+        const store = this.stores[name];
+        if (typeof store === 'undefined') {
             throw new Error(`Store not found: ${name}`);
         }
-        return this.stores[name];
+        return store;
     }
     /**
      * Get a cache driver instance.

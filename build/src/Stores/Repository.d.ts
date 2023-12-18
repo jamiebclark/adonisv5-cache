@@ -3,7 +3,7 @@
 /// <reference types="@adonisjs/lucid" />
 /// <reference types="@adonisjs/redis" />
 import { EmitterContract } from "@ioc:Adonis/Core/Event";
-import { CacheEvents, CacheKey, CacheManyValues, CacheNumericValue, CacheRememberClosure, CacheStoreContract, CacheValue, MinutesInput, RepositoryContract } from "@ioc:AdonisV5Cache";
+import { CacheEvents, CacheKey, CacheManyValues, CacheNumericValue, CacheRememberClosure, CacheStoreContract, CacheValue, MinutesInput, RepositoryContract, TagsInput } from "@ioc:AdonisV5Cache";
 export default class Repository implements RepositoryContract {
     /**
      * The cache store implementation
@@ -92,7 +92,7 @@ export default class Repository implements RepositoryContract {
      * Begin executing a new tags operation if the store supports it.
      *
      */
-    tags(namesInput: string[]): RepositoryContract;
+    tags(...names: TagsInput[]): RepositoryContract;
     /**
      * Format the key for a cache item.
      *

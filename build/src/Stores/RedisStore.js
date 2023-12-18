@@ -8,11 +8,6 @@ const Util_1 = require("../Util");
 const RedisTaggedCache_1 = __importDefault(require("./RedisTaggedCache"));
 const TagSet_1 = __importDefault(require("./TagSet"));
 const TaggableStore_1 = __importDefault(require("./TaggableStore"));
-/**
-TODO: We should merge TaggableCacheStore and CacheStore interfaces into one single Interface
-The default tags() function should just throw an error saying it's not implemented yet
-TaggableStore can overwrite that
- */
 class RedisStore extends TaggableStore_1.default {
     constructor(Redis, prefix = '', connectionName) {
         super();
@@ -25,6 +20,7 @@ class RedisStore extends TaggableStore_1.default {
      * Retrieve an item from the cache by key.
      */
     async get(key) {
+        console.log('REDIS FETCH', this.prefix + key);
         const value = await this.connection().get(this.prefix + key);
         return value ? (0, Util_1.deserialize)(value) : null;
     }
@@ -52,6 +48,7 @@ class RedisStore extends TaggableStore_1.default {
         if (isNaN(expiration) || expiration < 1) {
             expiration = 1;
         }
+        console.log('REDIS PUT', prefixedKey, expiration);
         await this.connection().setex(prefixedKey, expiration, serializedValue);
     }
     /**
@@ -115,9 +112,8 @@ class RedisStore extends TaggableStore_1.default {
     /**
      * Begin executing a new tags operation.
      */
-    tags(namesInput) {
-        const names = Array.isArray(namesInput) ? namesInput : Array.from(arguments);
-        return new RedisTaggedCache_1.default(this, new TagSet_1.default(this, names));
+    tags(...names) {
+        return new RedisTaggedCache_1.default(this, new TagSet_1.default(this, (0, Util_1.getTags)(names)));
     }
     /**
      * Get the Redis connection instance

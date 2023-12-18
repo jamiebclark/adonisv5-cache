@@ -1,16 +1,11 @@
 import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis'
-import { CacheKey, CacheManyValues, CacheNumericValue, CacheValue, MinutesInput } from '@ioc:AdonisV5Cache'
+import { CacheKey, CacheManyValues, CacheNumericValue, CacheValue, MinutesInput, TagsInput } from '@ioc:AdonisV5Cache'
 import _ from 'lodash'
-import { deserialize, getMinutesOrZero, serialize } from '../Util'
+import { deserialize, getMinutesOrZero, getTags, serialize } from '../Util'
 import RedisTaggedCache from './RedisTaggedCache'
 import TagSet from './TagSet'
 import TaggableStore from './TaggableStore'
 
-/**
-TODO: We should merge TaggableCacheStore and CacheStore interfaces into one single Interface
-The default tags() function should just throw an error saying it's not implemented yet
-TaggableStore can overwrite that
- */
 export default class RedisStore extends TaggableStore {
   private redis: RedisManagerContract;
   private prefix: string;
@@ -28,6 +23,7 @@ export default class RedisStore extends TaggableStore {
    * Retrieve an item from the cache by key.
    */
   public async get(key: CacheKey) {
+    console.log('REDIS FETCH', this.prefix + key)
     const value = await this.connection().get(this.prefix + key);
     return value ? deserialize(value) : null
   }
@@ -39,11 +35,10 @@ export default class RedisStore extends TaggableStore {
    */
   public async many(keys: CacheKey[]) {
     let values = await Promise.all(keys.map(key => this.get(key)))
-    let mappedValues = {}
-    for (let i = 0; i < keys.length; i++) {
-      mappedValues[keys[i]] = values[i]
-    }
-    return mappedValues
+    return keys.reduce((acc, key, i) => ({
+      ...acc,
+      [key]: values[i]
+    }), {} as Record<typeof keys[number], any>)
   }
 
   /**
@@ -57,6 +52,7 @@ export default class RedisStore extends TaggableStore {
     if (isNaN(expiration) || expiration < 1) {
       expiration = 1
     }
+    console.log('REDIS PUT', prefixedKey, expiration)
     await this.connection().setex(prefixedKey, expiration, serializedValue)
   }
 
@@ -123,9 +119,8 @@ export default class RedisStore extends TaggableStore {
   /**
    * Begin executing a new tags operation.
    */
-  public tags(namesInput: string[]) {
-    const names = Array.isArray(namesInput) ? namesInput : Array.from(arguments)
-    return new RedisTaggedCache(this, new TagSet(this, names))
+  public tags(...names: TagsInput[]) {
+    return new RedisTaggedCache(this, new TagSet(this, getTags(names)))
   }
 
   /**

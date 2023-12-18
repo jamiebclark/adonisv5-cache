@@ -8,7 +8,6 @@ export default class TagSet {
 
   /**
    * Create a new TagSet instance.
-   *
    */
   constructor(store: CacheStoreContract, names: string[] = []) {
     this.store = store
@@ -17,7 +16,6 @@ export default class TagSet {
 
   /**
    * Reset all tags in the set.
-   *
    */
   public reset() {
     return Promise.all(this.names.map((name) => this.resetTag(name)))
@@ -25,7 +23,6 @@ export default class TagSet {
 
   /**
    * Get the unique tag identifier for a given tag.
-   *
    */
   public async tagId(name: string) {
     const id = await this.store.get(this.tagKey(name))
@@ -34,7 +31,6 @@ export default class TagSet {
 
   /**
    * Get an array of tag identifiers for all of the tags in the set.
-   *
    */
   private tagIds() {
     return Promise.all(this.names.map(name => this.tagId(name)))
@@ -42,7 +38,6 @@ export default class TagSet {
 
   /**
    * Get a unique namespace that changes when any of the tags are flushed.
-   *
    */
   public async getNamespace() {
     return (await this.tagIds()).join('|')
@@ -50,7 +45,6 @@ export default class TagSet {
 
   /**
    * Reset the tag and return the new tag identifier.
-   *
    */
   public async resetTag(name: string) {
     const id = crypto.randomBytes(8).toString('hex')
@@ -60,7 +54,6 @@ export default class TagSet {
 
   /**
    * Get the tag identifier key for a given tag.
-   *
    */
   public tagKey(name: string) {
     return `tag:${name}:key`
@@ -68,7 +61,6 @@ export default class TagSet {
 
   /**
    * Get all of the tag names in the set.
-   *
    */
   public getNames() {
     return this.names

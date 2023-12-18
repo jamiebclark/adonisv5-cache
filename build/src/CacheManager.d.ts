@@ -10,7 +10,7 @@
 /// <reference types="@adonisjs/lucid" />
 /// <reference types="@adonisjs/redis" />
 import { ApplicationContract } from '@ioc:Adonis/Core/Application';
-import { CacheDriver, CacheStoreContract } from '@ioc:AdonisV5Cache';
+import { CacheDriver, CacheStoreContract, RepositoryContract } from '@ioc:AdonisV5Cache';
 import Repository from './Stores/Repository';
 export default class CacheManager {
     /**
@@ -30,11 +30,11 @@ export default class CacheManager {
     /**
      * Get a cache store instance by name.
      */
-    store(customName?: CacheDriver): any;
+    store(customName?: CacheDriver): RepositoryContract;
     /**
      * Get a cache driver instance.
      */
-    driver(driver?: CacheDriver): any;
+    driver(driver?: CacheDriver): RepositoryContract;
     /**
      * Attempt to get the store from the local cache.
      */

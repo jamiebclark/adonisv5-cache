@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.REFERENCE_KEY_STANDARD = exports.REFERENCE_KEY_FOREVER = void 0;
 const crypto_1 = __importDefault(require("crypto"));
 const lodash_1 = __importDefault(require("lodash"));
-const Util_1 = require("../Util");
 const TaggedCache_1 = __importDefault(require("./TaggedCache"));
 /**
  * Forever reference key.
@@ -21,9 +20,9 @@ class RedisTaggedCache extends TaggedCache_1.default {
      * Store an item in the cache.
      */
     async put(key, value, minutesInput = 0) {
-        const minutes = (0, Util_1.getMinutesOrZero)(minutesInput);
         await this.pushStandardKeys(await this.tagSet.getNamespace(), key);
-        await super.put(key, value, minutes);
+        // console.log('REDIST PUT', key, minutes, value)
+        await super.put(key, value, minutesInput);
     }
     /**
      * Store an item in the cache indefinitely.
@@ -78,14 +77,14 @@ class RedisTaggedCache extends TaggedCache_1.default {
      */
     async deleteKeysByReference(reference) {
         for (let segment of await this.tagSet.getNamespace()) {
-            await this._deleteValues(segment = this.referenceKey(segment, reference));
+            await this.deleteValues(segment = this.referenceKey(segment, reference));
             await this.store.connection().del(segment);
         }
     }
     /**
      * Delete item keys that have been stored against a reference.
      */
-    async _deleteValues(referenceKey) {
+    async deleteValues(referenceKey) {
         const values = lodash_1.default.uniq(await this.store.connection().smembers(referenceKey));
         for (let i = 0; i < values.length; i++) {
             await this.store.connection().del(values[i]);

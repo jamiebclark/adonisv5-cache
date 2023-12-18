@@ -10,6 +10,7 @@ declare module '@ioc:AdonisV5Cache' {
     export type CacheNullableValue = CacheValue | null;
     export type CacheManyValues = Record<CacheKey, CacheValue>;
     export type MinutesInput = number | Date;
+    export type TagsInput = string | string[];
     export type CacheRememberClosure = () => CacheValue | Promise<CacheValue>;
     export interface BaseCacheConfig {
         driver: CacheDriver;
@@ -60,7 +61,7 @@ declare module '@ioc:AdonisV5Cache' {
          */
         flush: () => Promise<void>;
         add?: (key: CacheKey, value: any, minutes: MinutesInput) => Promise<any>;
-        tags: (names: string[]) => RepositoryContract;
+        tags: (...names: TagsInput[]) => RepositoryContract;
     }
     export interface CacheEvents {
         hit: {
@@ -93,9 +94,9 @@ declare module '@ioc:AdonisV5Cache' {
         sear: (key: CacheKey, closure: CacheRememberClosure) => Promise<CacheValue>;
     }
     export interface CacheManagerContract {
-        store: (name?: CacheDriver) => CacheStoreContract;
-        driver: (driver?: CacheDriver) => CacheStoreContract;
-        repository: (store: CacheStoreContract) => any;
+        store: (name?: CacheDriver) => RepositoryContract;
+        driver: (driver?: CacheDriver) => RepositoryContract;
+        repository: (store: CacheStoreContract) => RepositoryContract;
         getDefaultDriver: () => CacheDriver;
         extend: (driver: CacheDriver, closure: Function) => CacheManagerContract;
     }

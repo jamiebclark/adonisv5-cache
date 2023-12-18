@@ -1,14 +1,9 @@
 /// <reference path="../../adonis-typings/cache.d.ts" />
 /// <reference types="@adonisjs/redis" />
 import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis';
-import { CacheKey, CacheManyValues, CacheNumericValue, CacheValue, MinutesInput } from '@ioc:AdonisV5Cache';
+import { CacheKey, CacheManyValues, CacheNumericValue, CacheValue, MinutesInput, TagsInput } from '@ioc:AdonisV5Cache';
 import RedisTaggedCache from './RedisTaggedCache';
 import TaggableStore from './TaggableStore';
-/**
-TODO: We should merge TaggableCacheStore and CacheStore interfaces into one single Interface
-The default tags() function should just throw an error saying it's not implemented yet
-TaggableStore can overwrite that
- */
 export default class RedisStore extends TaggableStore {
     private redis;
     private prefix;
@@ -55,7 +50,7 @@ export default class RedisStore extends TaggableStore {
     /**
      * Begin executing a new tags operation.
      */
-    tags(namesInput: string[]): RedisTaggedCache;
+    tags(...names: TagsInput[]): RedisTaggedCache;
     /**
      * Get the Redis connection instance
      */

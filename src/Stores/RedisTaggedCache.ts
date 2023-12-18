@@ -1,7 +1,6 @@
 import { CacheKey, CacheValue, MinutesInput } from '@ioc:AdonisV5Cache'
 import crypto from 'crypto'
 import _ from 'lodash'
-import { getMinutesOrZero } from '../Util'
 import RedisStore from './RedisStore'
 import TaggedCache from './TaggedCache'
 
@@ -22,9 +21,9 @@ export default class RedisTaggedCache extends TaggedCache {
    * Store an item in the cache.
    */
   public async put(key: CacheKey, value: CacheValue, minutesInput: MinutesInput = 0) {
-    const minutes = getMinutesOrZero(minutesInput)
     await this.pushStandardKeys(await this.tagSet.getNamespace(), key)
-    await super.put(key, value, minutes)
+    // console.log('REDIST PUT', key, minutes, value)
+    await super.put(key, value, minutesInput)
   }
 
   /**
@@ -63,9 +62,7 @@ export default class RedisTaggedCache extends TaggedCache {
    */
   async pushKeys(namespace: string, key: CacheKey, reference: string) {
     const fullKey = this.store.getPrefix() + crypto.createHash('sha1').update(namespace).digest('hex') + ':' + key
-    for (let segment of namespace.split('|')) {
-      await this.store.connection().sadd(this.referenceKey(segment, reference), fullKey)
-    }
+    return Promise.all(namespace.split('|').map((segment) => this.store.connection().sadd(this.referenceKey(segment, reference), fullKey)))
   }
 
   /**
@@ -87,7 +84,7 @@ export default class RedisTaggedCache extends TaggedCache {
    */
   private async deleteKeysByReference(reference: string) {
     for (let segment of await this.tagSet.getNamespace()) {
-      await this._deleteValues(segment = this.referenceKey(segment, reference))
+      await this.deleteValues(segment = this.referenceKey(segment, reference))
       await this.store.connection().del(segment)
     }
   }
@@ -95,18 +92,16 @@ export default class RedisTaggedCache extends TaggedCache {
   /**
    * Delete item keys that have been stored against a reference.
    */
-  private async _deleteValues(referenceKey: string) {
+  private async deleteValues(referenceKey: string) {
     const values = _.uniq(await this.store.connection().smembers(referenceKey))
-    for (let i = 0; i < values.length; i++) {
-      await this.store.connection().del(values[i])
-    }
+    return Promise.all(values.map((value) => this.store.connection().del(value)))
   }
 
   /**
    * Get the reference key for the segment.
    */
-  private referenceKey(segment, suffix) {
-    return this.store.getPrefix() + segment + ':' + suffix
+  private referenceKey(segment: string, suffix: string) {
+    return `${this.store.getPrefix()}${segment}:${suffix}`
   }
 }
 

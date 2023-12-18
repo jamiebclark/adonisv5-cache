@@ -194,10 +194,9 @@ class Repository {
      * Begin executing a new tags operation if the store supports it.
      *
      */
-    tags(namesInput) {
-        const names = Array.isArray(namesInput) ? namesInput : Array.from(arguments);
+    tags(...names) {
         if (typeof this.store.tags === 'function') {
-            const taggedCache = this.store.tags(names);
+            const taggedCache = this.store.tags((0, Util_1.getTags)(names));
             if (this.events !== undefined) {
                 taggedCache.setEventDispatcher(this.events);
             }

@@ -1,6 +1,6 @@
 import { EmitterContract } from "@ioc:Adonis/Core/Event";
-import { CacheEvents, CacheKey, CacheManyValues, CacheNumericValue, CacheRememberClosure, CacheStoreContract, CacheValue, MinutesInput, RepositoryContract } from "@ioc:AdonisV5Cache";
-import { deserialize, getMinutes, getMinutesOrZero, serialize, valueOf } from "../Util";
+import { CacheEvents, CacheKey, CacheManyValues, CacheNumericValue, CacheRememberClosure, CacheStoreContract, CacheValue, MinutesInput, RepositoryContract, TagsInput } from "@ioc:AdonisV5Cache";
+import { deserialize, getMinutes, getMinutesOrZero, getTags, serialize, valueOf } from "../Util";
 
 
 
@@ -233,11 +233,9 @@ export default class Repository implements RepositoryContract {
    * Begin executing a new tags operation if the store supports it.
    *
    */
-  public tags(namesInput: string[]) {
-    const names = Array.isArray(namesInput) ? namesInput : Array.from(arguments)
-
+  public tags(...names: TagsInput[]) {
     if (typeof this.store.tags === 'function') {
-      const taggedCache = this.store.tags(names)
+      const taggedCache = this.store.tags(getTags(names))
 
       if (this.events !== undefined) {
         taggedCache.setEventDispatcher(this.events)
